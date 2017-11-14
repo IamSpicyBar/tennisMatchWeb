@@ -1,1 +1,1 @@
-web gunicorn tennisWeb:app
+web: python BookmarkServer.py
