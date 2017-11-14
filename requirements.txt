@@ -1,2 +1,4 @@
-Flask
-gunicorn
+Flask==0.12.2
+Flask-HTTPAuth==3.2.3
+Flask-SQLAlchemy==2.3.2
+gunicorn==19.4.5

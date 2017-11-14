@@ -1,1 +1,1 @@
-web: gunicorn tennisWeb.py: app --log-file=-
+web: gunicorn tennisWeb:app --log-file -
