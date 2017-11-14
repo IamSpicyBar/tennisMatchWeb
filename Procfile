@@ -1,1 +1,1 @@
-web: python BookmarkServer.py
+web: gunicorn app: tennisWeb.py --log-file=-
