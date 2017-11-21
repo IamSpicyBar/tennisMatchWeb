@@ -5,9 +5,9 @@
         <link rel="icon" href="{{ url_for('static', filename='tennis_ball.png') }}" type="image/icon"/>
         <title>Login</title>
         <link rel="stylesheet" type=text/css href="{{ url_for('static', filename='main.css') }}">
-        <script>var __adobewebfontsappname__="dreamweaver"</script><script src="http://use.edgefonts.net/chewy:n4:default;damion:n4:default.js" type="text/javascript"></script>
+        <script>var __adobewebfontsappname__="dreamweaver"</script><script src="{{ url_for('static', filename='chewy_n4_default.js') }}" type="text/javascript"></script>
         <script type="text/javascript" href="{{ url_for('static', filename='jquery.min.js') }}"></script>
-        <script type="text/javascript">$(document).ready(function(){$(".message a").click(function(){$("form").animate({height: "toggle", opacity: "toggle"}, "slow");});});</script>
+        <!-- <script type="text/javascript">$(document).ready(function(){$(".message a").click(function(){$("form").animate({height: "toggle", opacity: "toggle"}, "slow");});});</script> -->
     </head>
 
     <body>
@@ -16,17 +16,22 @@
                 <h1>Ann Arbor Tennis Match Maker</h1>
             </header>
             <div id="welcomepic">
-              <img src="{{url_for('static',filename='tennis_court.jpg')}}" />
+              <img src="{{url_for('static',filename='tennis.jpg')}}"/>
             </div>
             <nav id="mainnav" name="mainnav">
                 <ul>
-                  <li><a href='{{url_for('home')}}' >Home</a></li>
-                  <li><a href='{{url_for('loginPage')}}' class="thispage">Login</a></li>
-                  <li><a href='{{url_for('courts')}}'>Tennis Courts</a></li>
+                    <li><a href="{{url_for('home')}}#mainnav">Home</a></li>
+                    <li><a href="{{url_for('loginPage')}}#mainnav" class="thispage">Request</a></li>
+                    <li><a href="{{url_for('courts')}}#mainnav">Tennis Courts</a></li>
                 </ul>
             </nav>
 
-            <div class="login-page">
+            <article id="main">
+               <h2>Request now!</h2>
+                <p>Please make a request through <a target="_blank" href="http://bit.ly/2AyBdtG">this form</a>.</p>
+            </article>
+
+<!--             <div class="login-page">
                 <div class="form">
 
                     <form class="login-form" action="http://bit.ly/2AyBdtG">
@@ -37,9 +42,9 @@
                     </form>
                 </div>
             </div>
-
+ -->
             <footer>
-                <p>Last Updated on 13-Nov-2017</p>
+                <p>Last Updated on 20-Nov-2017</p>
             </footer>
         </div>
     </body>

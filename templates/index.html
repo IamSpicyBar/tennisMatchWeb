@@ -5,7 +5,7 @@
         <link rel="icon" href="{{ url_for('static', filename='tennis_ball.png') }}" type="image/icon"/>
         <title>Let's Play Tennis</title>
         <link rel="stylesheet" type=text/css href="{{ url_for('static', filename='main.css') }}">
-        <script>var __adobewebfontsappname__="dreamweaver"</script><script src="http://use.edgefonts.net/chewy:n4:default;damion:n4:default.js" type="text/javascript"></script>
+        <script>var __adobewebfontsappname__="dreamweaver"</script><script src="{{ url_for('static', filename='chewy_n4_default.js') }}" type="text/javascript"></script>
         <script type="text/javascript" href="{{ url_for('static', filename='jquery.min.js') }}"></script>
     </head>
 
@@ -15,13 +15,13 @@
                 <h1>Ann Arbor Tennis Match Maker</h1>
             </header>
             <div id="welcomepic">
-                <img src="{{url_for('static',filename='tennis_court.jpg')}}" />
+                <img src="{{url_for('static',filename='tennis.jpg')}}"/>
             </div>
             <nav id="mainnav" name="mainnav">
                 <ul>
-                    <li><a href='{{url_for('home')}}' class="thispage">Home</a></li>
-                    <li><a href='{{url_for('loginPage')}}'>Login</a></li>
-                    <li><a href='{{url_for('courts')}}'>Tennis Courts</a></li>
+                    <li><a href="{{url_for('home')}}#mainnav" class="thispage">Home</a></li>
+                    <li><a href="{{url_for('loginPage')}}#mainnav">Request</a></li>
+                    <li><a href="{{url_for('courts')}}#mainnav">Tennis Courts</a></li>
                 </ul>
             </nav>
             <article id="main">
@@ -29,7 +29,7 @@
                 <p>Web page for the ENTR 550 project</p>
             </article>
             <footer>
-                <p>Last Updated on 13-Nov-2017</p>
+                <p>Last Updated on 20-Nov-2017</p>
             </footer>
         </div>
     </body>
