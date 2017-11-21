@@ -29,20 +29,16 @@ def courts():
 def varsity():
     return render_template('VTC.html')
 
-@app.route('/courts/VTC/contact')
-
-def varsityContact():
-    return render_template('varsity_contact.html')
 
 @app.route('/courts/CCRB')
 
 def ccrb():
     return render_template('ccrb.html')
 
-@app.route('/courts/CCRB/contact')
+@app.route('/courts/baits')
 
-def ccrbContact():
-    return render_template('ccrb_contact.html')
+def baits():
+    return render_template('baits.html')
 
 #@app.route('/match')
 

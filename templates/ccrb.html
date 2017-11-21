@@ -1,0 +1,46 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <link rel="icon" href="{{ url_for('static', filename='tennis_ball.png') }}" type="image/icon"/>
+        <title>CCRB</title>
+        <link rel="stylesheet" type=text/css href="{{ url_for('static', filename='main.css') }}">
+        <script>var __adobewebfontsappname__="dreamweaver"</script><script src="{{ url_for('static', filename='chewy_n4_default.js') }}" type="text/javascript"></script>
+        <script type="text/javascript" href="{{ url_for('static', filename='jquery.min.js') }}"></script>
+    </head>
+
+    <body>
+        <div id="wrapper">
+            <header id="top">
+                <h1>Ann Arbor Tennis Match Maker</h1>
+            </header>
+            <div id="welcomepic">
+                <img src="{{url_for('static',filename='tennis.jpg')}}"/>
+            </div>
+            <nav id="mainnav" name="mainnav">
+                <ul>
+                    <li><a href="{{url_for('home')}}#mainnav">Home</a></li>
+                    <li><a href="{{url_for('loginPage')}}#mainnav">Request</a></li>
+                    <li><a href="{{url_for('courts')}}#mainnav" class="thispage">Tennis Courts</a></li>
+                </ul>
+            </nav>
+
+            <article id="main">
+                <h2>CCRB Info</h2>
+                <p>Address: Central Campus Recreation Building, 401 Washtenaw Ave, Ann Arbor, MI 48109; Courts at Palmer field.</p>
+                <p>What?: Eight illuminated outdoor courts and locker facilities.</p>
+                <p>Membership or Registering required: No; First come, first serve-basis.</p>
+                <p>Open hours: All year around (weather permitting).</p>
+                <p>Schedule: Not officially published; currently used: Mo-Th from 4-6 pm (two courts), Mo & Tu from 5-10:30 pm (two courts).</p>
+                <p>More information: <a href="https://recsports.umich.edu/facilities/outdoor/">Court website</a></p>
+                <img class="tenniscourt" src="{{url_for('static',filename='palmer_court_0.jpg')}}"/>
+                <br/>
+                <img class="tenniscourt" src="{{url_for('static',filename='palmer_court_1.jpg')}}"/>
+                <br/>
+            </article>
+            <footer>
+                <p>Last Updated on 20-Nov-2017</p>
+            </footer>
+        </div>
+    </body>
+</html>
