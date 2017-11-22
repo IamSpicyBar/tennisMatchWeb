@@ -122,7 +122,13 @@ def fakeRequests():
                     request['Level'] = level
                     request['Email'] = 'h.mercury.g.2730@gmail.com'
                     request['Phone'] = str(phone)
-                    request['Time'] = 'Monday Tuesday Wednesday Thursday Friday Saturday Sunday'
+                    request['Monday'] = 'Morning Afternoon Evening'
+                    request['Tueday'] = 'Morning Afternoon Evening'
+                    request['Wednesday'] = 'Morning Afternoon Evening'
+                    request['Thursday'] = 'Morning Afternoon Evening'
+                    request['Friday'] = 'Morning Afternoon Evening'
+                    request['Saturday'] = 'Morning Afternoon Evening'
+                    request['Sunday'] = 'Morning Afternoon Evening'
                     request['P_Age'] = '10-15 16-20 21-25 26-30 31-40 41 or above'
                     request['P_Gender'] = 'Male Female'
                     request['P_Level'] = 'Beginner Intermediate Advanced'
@@ -195,7 +201,22 @@ def parseMessage(msgStr):
     str = msgStr[(idx1 + 28) : (idx2 - 1)]
     strArr = str.splitlines()
     request = {}
-    for line in strArr:
+    newLineFlag = True
+
+    for l in strArr:
+        if newLineFlag:
+            line = ''
+
+        line = line + l
+
+        if l.endswith('='):
+            newLineFlag = False
+            continue
+        else:
+            newLineFlag = True
+
+        line = line.replace('=', '')
+
         if line.startswith('Name'):
             request['Name'] = line[6 : ]
             print('Name: ' + request['Name'])
@@ -215,8 +236,63 @@ def parseMessage(msgStr):
             request['Phone'] = line[14 : ]
             print('Phone: ' + request['Phone'])
         elif line.startswith('Time to play'):
-            request['Time'] = line[14 : ]
-            print('Time to play: ' + request['Time'])
+            timeStr = line[14 : ]
+            if timeStr.startswith('Monday'):
+                i1 = timeStr.find('(')
+                i2 = timeStr.find(')')
+                request['Monday'] = timeStr[(i1 + 1) : i2]
+                timeStr = timeStr[(i2 + 2) : ]
+                print('Monday: ' + request['Monday'])
+            else:
+                request['Monday'] = ''
+            if timeStr.startswith('Tuesday'):
+                i1 = timeStr.find('(')
+                i2 = timeStr.find(')')
+                request['Tuesday'] = timeStr[(i1 + 1) : i2]
+                timeStr = timeStr[(i2 + 2) : ]
+                print('Tuesday: ' + request['Tuesday'])
+            else:
+                request['Tuesday'] = ''
+            if timeStr.startswith('Wednesday'):
+                i1 = timeStr.find('(')
+                i2 = timeStr.find(')')
+                request['Wednesday'] = timeStr[(i1 + 1) : i2]
+                timeStr = timeStr[(i2 + 2) : ]
+                print('Wednesday: ' + request['Wednesday'])
+            else:
+                request['Wednesday'] = ''
+            if timeStr.startswith('Thursday'):
+                i1 = timeStr.find('(')
+                i2 = timeStr.find(')')
+                request['Thursday'] = timeStr[(i1 + 1) : i2]
+                timeStr = timeStr[(i2 + 2) : ]
+                print('Thursday: ' + request['Thursday'])
+            else:
+                request['Thursday'] = ''
+            if timeStr.startswith('Friday'):
+                i1 = timeStr.find('(')
+                i2 = timeStr.find(')')
+                request['Friday'] = timeStr[(i1 + 1) : i2]
+                timeStr = timeStr[(i2 + 2) : ]
+                print('Friday: ' + request['Friday'])
+            else:
+                request['Friday'] = ''
+            if timeStr.startswith('Saturday'):
+                i1 = timeStr.find('(')
+                i2 = timeStr.find(')')
+                request['Saturday'] = timeStr[(i1 + 1) : i2]
+                timeStr = timeStr[(i2 + 2) : ]
+                print('Saturday: ' + request['Saturday'])
+            else:
+                request['Saturday'] = ''
+            if timeStr.startswith('Sunday'):
+                i1 = timeStr.find('(')
+                i2 = timeStr.find(')')
+                request['Sunday'] = timeStr[(i1 + 1) : i2]
+                timeStr = timeStr[(i2 + 2) : ]
+                print('Sunday: ' + request['Sunday'])
+            else:
+                request['Sunday'] = ''
         elif line.startswith('Partner\'s age'):
             request['P_Age'] = line[15 : ]
             print('Partner\'s age: ' + request['P_Age'])
@@ -255,18 +331,18 @@ def checkInbox(service):
     return requests
 
 def findMatch(newRequest, outstandingRequests):
-    times = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+    days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+    times = ['Morning', 'Afternoon', 'Evening']
     for ID, prevRequest in outstandingRequests.iteritems():
         if (ID == newRequest['ID']):
             continue
-        commonTime = {}
+        commonTime = {'Monday': '', 'Tuesday': '', 'Wednesday': '', 'Thursday': '', 'Friday': '', 'Saturday': '', 'Sunday': ''}
         timeMatch = False
-        for time in times:
-            if ((prevRequest['Time'].find(time) >= 0) and (newRequest['Time'].find(time) >= 0)):
-                commonTime[time] = True
-                timeMatch = True
-            else:
-                commonTime[time] = False
+        for day in days:
+            for time in times:
+                if ((prevRequest[day].find(time) >= 0) and (newRequest[day].find(time) >= 0)):
+                    commonTime[day] = commonTime[day] + time + ' '
+                    timeMatch = True
 
         if (timeMatch                                                and \
            (prevRequest['P_Age'].find(newRequest['Age']) >= 0)       and \
@@ -289,9 +365,9 @@ def sendEmail(request, matchInfo, service):
     messageText += '\nBased on your preferences, we found out that you could play tennis together this week at the following day(s):\n'
     times = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
     for time in times:
-        if commonTime[time]:
-            messageText += time + '\n'
-    messageText += '\nYou could either play at COURT_A, COURT_B, or COURT_C.\n\n'
+        if (commonTime[time] != ''):
+            messageText += time + ': ' + commonTime[time] +'\n'
+    messageText += '\nYou could either play at Varsity Tennis Center, CCRB, or Baits II.\n\n'
     messageText += 'Your contact info:\n'
     messageText += request['Name'] + ': ' + request['Email'] + ', ' + request['Phone'] + '\n'
     messageText += prevRequest['Name'] + ': ' + prevRequest['Email'] + ', ' + prevRequest['Phone'] + '\n\n'
@@ -303,6 +379,7 @@ def sendEmail(request, matchInfo, service):
     message['subject'] = 'Ann Arbor Tennis'
     message = {'raw': base64.urlsafe_b64encode(message.as_string())}
 
+
     try:
         message = (service.users().messages().send(userId = 'me', body = message).execute())
     except errors.HttpError, error:
@@ -311,8 +388,8 @@ def sendEmail(request, matchInfo, service):
 def main():
     service = launchService()
     CHECK_INTERVAL = 60
-    outstandingRequests = fakeRequests()
-    # outstandingRequests = {}
+    # outstandingRequests = fakeRequests()
+    outstandingRequests = {}
 
     while True:
         # Check if new requests are made:
@@ -333,7 +410,7 @@ def main():
                     del outstandingRequests[request['ID']]
             else:
                 outstandingRequests[request['ID']] = request
-
+ 
         # Every midnight, expire requests which are 7 days old:
         localTime = time.localtime(time.time())
         if ((localTime[3] == 0) and (localTime[4] < (1 + CHECK_INTERVAL / 60))):
