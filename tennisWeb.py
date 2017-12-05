@@ -40,6 +40,36 @@ def ccrb():
 def baits():
     return render_template('baits.html')
 
+@app.route('/courts/huron')
+
+def huron():
+    return render_template('huron_high.html')
+
+@app.route('/courts/racquet')
+
+def racquet():
+    return render_template('racquet.html')
+
+@app.route('/courts/ypsilanti')
+
+def ypsilanti():
+    return render_template('ypsilanti_high.html')
+
+@app.route('/courts/greenhills')
+
+def greenhills():
+    return render_template('greenhills_high.html')
+
+@app.route('/courts/clague')
+
+def clague():
+    return render_template('clague_middle.html')
+
+@app.route('/courts/sugarbush')
+
+def sugarbush():
+    return render_template('sugarbush.html')
+
 #@app.route('/match')
 
 #def match():
