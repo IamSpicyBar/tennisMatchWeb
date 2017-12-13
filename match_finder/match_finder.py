@@ -17,6 +17,7 @@ from apiclient import errors
 import base64
 import time
 from email.mime.text import MIMEText
+import json
 
 # If modifying these scopes, delete your previously saved credentials
 # at ~/.credentials/gmail-python-quickstart.json
@@ -24,6 +25,8 @@ SCOPES = 'https://mail.google.com/'
 CLIENT_SECRET_FILE = 'client_secret.json'
 APPLICATION_NAME = 'Gmail API Python Quickstart'
 
+CHECK_INTERVAL = 60
+N_EXPIRE = 7
 
 def getCredentials():
     """
@@ -132,9 +135,9 @@ def fakeRequests():
                     request['P_Age'] = '10-15 16-20 21-25 26-30 31-40 41 or above'
                     request['P_Gender'] = 'Male Female'
                     request['P_Level'] = 'Beginner Intermediate Advanced'
-                    request['ID'] = ID
+                    request['ID'] = str(ID)
                     request['Date'] = month[t[1] - 1] + ' ' + str(t[2]) + ', ' + str(t[0])
-                    request['Year_Day'] = t[7]
+                    request['Year_Day'] = str(t[7])
                     outstandingRequests[ID] = request
                     phone += 1
                     ID += 1
@@ -357,7 +360,7 @@ def findMatch(newRequest, outstandingRequests):
     print('*** No match found')
     return 0
 
-def sendEmail(request, matchInfo, service):
+def sendMatchEmail(request, matchInfo, service):
     prevRequest = matchInfo[0]
     commonTime = matchInfo[1]
     
@@ -379,6 +382,47 @@ def sendEmail(request, matchInfo, service):
     message['subject'] = 'Ann Arbor Tennis'
     message = {'raw': base64.urlsafe_b64encode(message.as_string())}
 
+    try:
+        message = (service.users().messages().send(userId = 'me', body = message).execute())
+    except errors.HttpError, error:
+        print ('An error occurred: %s' % error)
+
+def sendWaitEmail(request, requestUpdated, service):
+    messageText = 'Hi ' + request['Name'] + '!\n'
+    messageText += '\nYour request for finding a match to play tennis with has been '
+    if requestUpdated:
+        messageText += 'received.'
+    else:
+        messageText += 'updated.'
+    messageText += ' It will be valid for ' + str(N_EXPIRE) + ' days.'
+    messageText += ' We will contact you by email as soon as we find a partner who matches your preferences.\n\n'
+    messageText += 'Have fun!\n'
+
+    message = MIMEText(messageText)
+    message['to'] = request['Email']
+    message['from'] = 'entr550.annarbor.tennis@gmail.com'
+    message['subject'] = 'Ann Arbor Tennis'
+    message = {'raw': base64.urlsafe_b64encode(message.as_string())}
+
+    try:
+        message = (service.users().messages().send(userId = 'me', body = message).execute())
+    except errors.HttpError, error:
+        print ('An error occurred: %s' % error)
+
+def sendExpireEmail(request, service):
+    messageText = 'Hi ' + request['Name'] + '!\n'
+    messageText += '\nUnfortunately, your request for finding a match to play tennis with'
+    messageText += ', which was made on ' + request['Date']
+    messageText += ', has been expired because no match was found for you.'
+    messageText += 'If you are still interested, you can easily make another request'
+    messageText += ' by visiting annarbortennis.herokuapp.com \n\n'
+    messageText += 'Have fun!\n'
+
+    message = MIMEText(messageText)
+    message['to'] = request['Email']
+    message['from'] = 'entr550.annarbor.tennis@gmail.com'
+    message['subject'] = 'Ann Arbor Tennis'
+    message = {'raw': base64.urlsafe_b64encode(message.as_string())}
 
     try:
         message = (service.users().messages().send(userId = 'me', body = message).execute())
@@ -387,9 +431,13 @@ def sendEmail(request, matchInfo, service):
 
 def main():
     service = launchService()
-    CHECK_INTERVAL = 60
     # outstandingRequests = fakeRequests()
     outstandingRequests = {}
+
+    # Read previous requests from the file if any:
+    if os.path.isfile('data.json'):
+        with open('data.json', 'r') as f:
+            outstandingRequests = json.load(f)
 
     while True:
         # Check if new requests are made:
@@ -404,14 +452,19 @@ def main():
                 requestUpdated = True
             matchInfo = findMatch(request, outstandingRequests)
             if matchInfo:
-                sendEmail(request, matchInfo, service)
+                sendMatchEmail(request, matchInfo, service)
                 del outstandingRequests[matchInfo[0]['ID']]
                 if requestUpdated:
                     del outstandingRequests[request['ID']]
             else:
+                sendWaitEmail(request, requestUpdated, service)
                 outstandingRequests[request['ID']] = request
  
-        # Every midnight, expire requests which are 7 days old:
+        if newRequests:
+            with open('data.json', 'w') as f:
+                json.dump(outstandingRequests, f)
+
+        # Every midnight, expire requests which are N_EXPIRE days old:
         localTime = time.localtime(time.time())
         if ((localTime[3] == 0) and (localTime[4] < (1 + CHECK_INTERVAL / 60))):
             tempRequests = outstandingRequests.copy()
@@ -419,9 +472,12 @@ def main():
                 deltaDay = localTime[7] - request['Year_Day']
                 if (deltaDay < 0):
                     deltaDay += 365
-                if (deltaDay > 7):
+                if (deltaDay > N_EXPIRE):
+                    sendExpireEmail(tempRequests[ID], service)
                     del tempRequests[ID]
             outstandingRequests = tempRequests
+            with open('data.json', 'w') as f:
+                json.dump(outstandingRequests, f)
 
         print('*** Outstanding requests: ' + str(len(outstandingRequests)))
         print('*****************************************************************************')
